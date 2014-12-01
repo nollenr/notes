@@ -1,0 +1,6 @@
+http://longair.net/blog/2009/04/16/git-fetch-and-merge/
+Use Fetch and Merge.  Don't pull.
+
+Although, pull is the only thing that works for me when the local repository is new,
+but the remote has info.
+
