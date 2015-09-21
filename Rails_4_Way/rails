@@ -1,0 +1,189 @@
+Introduction:
+-------------
+RoR is a vast ecosystem
+Pickaxe: Programming Ruby <- Good book on Ruby language
+
+docs.rubygems.org
+
+Good Doc on configuring rails/activerecord/actiondispatch/etc
+http://guides.rubyonrails.org/configuring.html
+
+Chapter 1 Rails Env and Config
+-------------------------------
+3 stanard modes of operation: development, test and production
+environment var RAILS_ENV
+
+corresponds to a config/enrironments folder
+
+The Gemfile can have groups based on these (or addtnl) envs
+group: development do
+  gem 'pry-reails'
+end
+  
+1.2 Starup  <- loading the rails environment
+config/boot.rb
+config/application.rb
+config/environment.rb
+
+1.8.1 / 1.8.2
+Clearing log files: rake log:clear
+Tagged logging
+
+
+Chapter 2 Routing
+------------------------
+Incoming request --> action to take by application
+
+Controller Action <- main event
+
+2.1: maps request to controll action methods  and enable dynamic gneration of URLS (link_to/redirect_to)
+Each rule is a template for matching and blueprint for creating
+
+Segment Keys have colons and are parameters (get 'product/:id' => 'products#show')
+
+My take away from this chapter is to revisit routes as development progresses... dry them up, use named routes for link_to purposes
+
+Chapter 3 REST, Resources, and Rails
+------------------------------------------
+Rest really is about resources and delivering them in requests and responses.
+Content type (one representation v another [text vs audio]) would be negotiated separetly in the request.
+
+Rails, then is about resources.  
+
+How does security work in the RESTful scheme?  Given auctions/bids, should there also be users/cellars?  Is user a resource like auctions?
+
+Chapter 4 Working with Controllers
+----------------------------------
+4.2 Action Dispatch
+
+4.7 Action Callbacks
+Share pre and post processing code: authentication, caching or auditing
+  4.7.4: Around action callbacks wrap an action, executing code both before and after the action they wrap.
+  
+4.8 Streaming / ActionController::Live
+
+Chapter 5 Working with Active Record
+-------------------------------------
+Class (singular) maps to the database table (plural)
+NOTE:  has_many is a method that adds attributes to the class
+
+5.4.2: Reading Active Record Objects.  Depending on how find is invoked, you will get either a single Active REcord object or an array or them.
+5.4.12: update_attribute does not execute validation checks.
+5.4.13: increment, decrement and toggle
+
+Updating a readonly attribute will fail silently
+Saving a destroyed record also fails silently.
+
+*****5.5.1: Optimistic locking
+add integer column "lock_version" to a table with a default value of zero.
+If same record isloaded as two different model instances and saved differently, the first instance will win the update. and the second will cuase an "ActiveRecord::StaleObjectError"
+
+5.6 Where Clauses
+conditions
+binds
+5.6.2.1 BOOLEAN -- Rails will transparently handle the data conversion issues if you pass a Rub boolean object as your parameter
+
+5.6.10 includes -- eager loading -- min number of queries
+5.6.11 joins -- useful when grouping and aggregating, but not loading associated objects
+
+Chapter 6 Active Record Migratrions
+-----------------------------------
+6.2 data migration
+6.3 schema.rb
+  everytime you run a migration db/schema.rb <- authoritative source
+  if you need to create the applicaiton database, use rake db:schema:load
+
+6.4 Database Seeding
+  db/seeds.rb
+  rake db:seed
+
+Chapter 7 Active Record Associations
+------------------------------------
+Associations appear as methods on Active Record model objects
+Association collestions are basically fancy wrapers around a Ruby array with methods.
+7.2.2 lists all of the methods available for associations
+
+7.3.4.2 Includes As part of the belons_to
+
+Chapter 8 Validations
+---------------------
+
+Chapter 9 Advanced Active Record
+-------------------------------
+Scopes - chain query criteria (avail, unavail, all_availabilities)
+Default scopes get applied to model when creating them.  Will probably need "unscoped" at times.
+
+Callbacks
+Single Table Inheritance
+
+Chapter 10 Action View
+----------------------
+10.1.8 flash.now
+10.2.4 Passing Variables to Partials
+
+Chapter 11 Helpers
+------------------
+Action View Helpers
+11.1.1 Validation Errors
+
+Chatper 12 HAML
+---------------
+
+Chapter 13 SEssion
+------------------
+13.3 Storage Mechanisms
+
+Chapter 14 Authenication and Authorization
+------------------------------------------
+Devise
+Pundit
+
+Chapter 15 Security
+-------------------
+15.2 Log Masking - Be sure to set filters so passwords don't end up in the logs
+15.6 Cross_siet Scripting XSS - Be sure to escape sanitize unsafe HTML content.
+
+Chapter 19 Ajax
+---------------
+
+Chapter 20 Asset Pipeline
+-------------------------
+
+Chapter 21 RSpec
+----------------
+DSL (Domain Specific Language) for createing specifications (behaviors?)
+  describe and context: methods used to group related examples of behavior
+  let: memorized attributes (executed once and stored)
+  let (:blog_post) {BlogPost.new title: 'hello'}  (creates a "variable" blog_post for the object)
+  
+  before and after: used to set state as it should be prior to running an example and clean up after (rare to need after)
+  
+  it: complete the thought in the describe
+  
+  specify: alias of "it"
+  
+  pending: kind of a "todo"
+  
+  expect().to and expect().to_not:  preferred way to define po and neg expectations
+  
+  Matchers and Custom Expectation Matchers
+  
+Be sure the RSpec gem is install
+May need Capybara for DSL? (under :test group) and run bundle, then in spec/spec_helper.rb "require 'capybara/rspec'".
+
+Appendix A Active Model API Reference
+-------------------------------------
+
+Appendix B Active Support
+-------------------------
+
+Appendix C Rails Essentials
+---------------------------
+The tools rails masters use every day.
+Essential Gems
+  better_errors
+  debugger or remote_debugger for web servers that run in the background
+  nested_form_fields (to edit records along with their has_many associations on a single page)
+  rails_admin (?)
+  simple_form
+  
