@@ -1,0 +1,37 @@
+Bootstrap uses Less (css pre-processor), which is _like_ sass.  RB does not recommend downloading Bootstrap (static, compiled) and placing in the app/assets directory.  
+
+gem twitter-bootstrap-rails
+only needed in the assets group 
+i.e. 
+group: assets do 
+ ...
+ gem 'twitter-bootstrap-rails'
+end
+
+several dependancies will be installed with the bundle install (libv8, less-rails)
+
+Then, install bootstrap
+rails g bootstrap:install
+
+One thing this installs is app/assets/stylesheets/bootstrap_and_overrides.css.less which is where bootstrap can be customized.
+
+At this point we _could_ use "rails g bootstrap:layout [LAYOUT_NAME] [*fixed or fluid]"
+Note that the fixed layout is still responsive
+
+if you're using the navbar, you need to make a change to the bootstrap_and_overrides.css.less file...
+
+between the bootstrap and responsive import commands, add "body { paddding-top: 60px; }" so that the top of the page isn't lost behind the navbar.
+
+Also need to add the meta tag to the application.html.erb to ensure that it works everywhere:
+<meta name="viewport" content="width-device-width, initial-scale=1.0">
+
+
+More options for bootstrap and rails:
+http://www.sitepoint.com/twitter-bootstrap-less-and-sass-understanding-your-options-for-rails-3-1/
+========================================
+
+Twitter Bootstrap
+<div class="container"> for a fixed layout of 940px-wide
+<div class="container-fluid"> for a fluid layout.
+
+Wrap the "yeild" in the application.html.erb with a container.

@@ -1,0 +1,26 @@
+bootstrap-sass
+	https://github.com/twbs/bootstrap-sass
+
+Class and Instance variables
+	http://www.railstips.org/blog/archives/2006/11/18/class-and-instance-variables-in-ruby/
+
+Delayed::Job
+	https://github.com/collectiveidea/delayed_job
+	http://railscasts.com/episodes/171-delayed-job-revised?view=asciicast
+	http://www.salsify.com/blog/delayed-jobs-callbacks-and-hooks-in-rails
+
+File and I/O
+	http://www.tutorialspoint.com/ruby/ruby_input_output.htm
+	http://stackoverflow.com/questions/5545068/what-are-all-the-common-ways-to-read-a-file-in-ruby
+
+Paperclip
+	https://github.com/thoughtbot/paperclip
+
+Ransack
+	https://github.com/activerecord-hackery/ransack
+	
+Ruby on Rails Tutorial
+	http://ruby.railstutorial.org/chapters/sign-in-sign-out#sec-signin_failure
+
+Tempfiles
+	http://www.tutorialspoint.com/ruby/ruby_input_output.htm

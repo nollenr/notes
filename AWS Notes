@@ -1,0 +1,73 @@
+installed the key into ~/.ec2
+
+
+ssh -i ~/.ec2/liszt-keypair.pem -X ec2-user@ec2-54-200-81-97.us-west-2.compute.amazonaws.com
+sudo su -
+
+The production/development switch is in /etc/httpd/conf/httpd.conf
+
+
+The following needs to be set for rails server to access my S3
+$AWS_ACCESS_KEY_ID      $AWS_BUCKET             $AWS_SECRET_ACCESS_KEY  
+export AWS_BUCKET=degas-prod-bucket01
+export AWS_ACCESS_KEY_ID=AKIAJSGNRZAGAVGX7OAA
+export AWS_SECRET_ACCESS_KEY=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
+
+httpd Conf settings for accessing S3 from EC2
+<VirtualHost *:80>
+    ServerAdmin ron.nollen@me.com
+    DocumentRoot /home/appman/rails/degas/public
+    <Directory /home/appman/rails/degas/public>
+      AllowOverride all
+      Order deny,allow
+      Allow from all
+      Options -MultiViews
+    </Directory>
+    RailsEnv production
+    ServerName degas.com
+    ErrorLog logs/degas.com-error_log
+    CustomLog logs/degas.com-access_log common
+    SetEnv AWS_BUCKET degas-bucket1
+    SetEnv AWS_ACCESS_KEY_ID AKIAJSGNRZAGAVGX7OAA
+    SetEnv AWS_SECRET_ACCESS_KEY 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
+</VirtualHost>
+
+====================================================
+Deploying:
+
+In notes/apache_stuff are 3 httpd.conf files and 2 html files
+  Deploy the httpd files to /etc/httd/conf
+  Deploy the html files to /var/www/html
+  --
+  To singal an outage, copy httpd.out.conf to httpd.conf and restart the httpd service
+  To end the outage, copy http.alive.conf to httpd.conf and restart the service
+
+ssh -i ~/.ec2/liszt-keypair.pem -X ec2-user@ec2-54-200-81-97.us-west-2.compute.amazonaws.com
+sudo su -
+
+As root:
+service httpd stop
+
+As appman:
+copy the /home/appman/rails/degas/.git/config to ~/.
+
+cd /home/appman/rails
+rm -rf degas
+
+mkdir degas
+cd degas
+git init
+
+mv ~/config ~/rails/degas/.git/.
+
+git pull origin <branch name>
+
+cp config/database.yml.liszt.aws config/database.yml
+
+rvm gemset use rails3214
+rm Gemfile.lock
+bundle install --local
+RAILS_ENV=production bundle exec rake assets:precompile
+
+As root:
+service httpd start

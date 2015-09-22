@@ -1,0 +1,38 @@
+[nollenr@seurat degas]$ rake assets:precompile
+/usr/local/rvm/rubies/ruby-1.9.3-p362/bin/ruby /usr/local/rvm/gems/ruby-1.9.3-p362/bin/rake assets:precompile:all RAILS_ENV=production RAILS_GROUPS=assets
+[nollenr@seurat degas]$ su - 
+Password: 
+[root@seurat ~]# cd /usr/local/apache2/bin/
+[root@seurat bin]# ls
+ab            apu-1-config  dbmmanage    fcgistarter   htdigest  httxt2dbm
+apachectl     apxs          envvars      htcacheclean  htpasswd  logresolve
+apr-1-config  checkgid      envvars-std  htdbm         httpd     rotatelogs
+[root@seurat bin]# ./apachectl stop
+[root@seurat bin]# ./apachectl start
+
+
+
+When doing a commit and push... it's actually
+git add .
+git commit -m "<some commit message>"
+rake generate_globals
+git add .
+git commit -m "generated globals"
+git push
+git push --tags
+
+
+==========================================================================
+Deploying on AWS
+
+Root:
+service httpd stop
+su - appman
+
+rvm gemset use rails3214
+cd rails/degas/
+git pull origin 20131007_responsiveBootstrap_feature
+time RAILS_ENV=production bundle exec rake assets:precompile
+
+Root:
+service httpd start

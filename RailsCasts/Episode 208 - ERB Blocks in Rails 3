@@ -1,0 +1,37 @@
+Capture / Concat
+
+http://stackoverflow.com/questions/5540709/how-does-a-helper-method-and-yield-to-a-block-in-rails-3
+
+Scenario:  Admin area where links are displayed or not given the users status
+
+
+If you need to fetch the content of a block in the view, just use the with_output_buffer method
+
+<%= admin_area do %>
+	link_to "Edit"...
+	link_to "Destroy" ...
+	link_to "View All"...
+<% end %>
+
+Inside the ApplicationHelper
+module Application Helper
+	def admin_area(&block)   <- meaning that it has a little block that it accepts
+		"whatever"           <- this will just return "whatever"  ...no links will be shown on the page
+	end
+end
+
+
+Inside the ApplicationHelper
+module Application Helper
+	def admin_area(&block)   <- meaning that it has a little block that it accepts
+		content = capture(&block)
+		content_tag(:div, content, :class=>"admin)           
+	end
+end
+
+Inside the ApplicationHelper
+module Application Helper
+	def admin_area(&block)   <- meaning that it has a little block that it accepts
+		content_tag(:div, :class=>"admin, &block)   
+	end
+end

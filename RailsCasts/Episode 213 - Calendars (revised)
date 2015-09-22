@@ -1,0 +1,21 @@
+Date Picker (jQuery UI)
+
+in the index he has a block that displays each "article"
+<div id="articles">
+	<% @articles.each do |article| %>
+		<h2><%= link_to article.name...<h2>
+		<%= simple_format atricle.content%>
+		<p><%= link_to "Edit Article... %></p>
+	<% end %>
+</div>
+
+
+instead... I want to dispaly a calendar
+<div id="articles">
+	<%= calendar do |date| <- calendar helper method which accepts a block and the date to be passed in through here.  This will be executed for each date passed in
+		<%= date.day %>
+	<%end%>
+</div>
+
+calendar_helper.rb
+

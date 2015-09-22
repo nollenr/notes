@@ -1,0 +1,89 @@
+http://chrismccord.com/blog/2013/01/09/better-heroku-db-push-and-db-pull/
+using heroku_pg_pull and heroku_pg_push to export/import data
+
+Create the heroku app
+  "heroku create"
+
+If you've changed development hosts, you may need to do the following
+-bash-4.1$ heroku keys:add ~/.ssh/id_rsa.pub
+
+Push git master
+  The git config file must have the config for the new heroku app:
+  /home/nollenr/rails/degas/.git
+  [nollenr@saphp .git]$ cat config
+  [core]
+          repositoryformatversion = 0
+          filemode = true
+          bare = false
+          logallrefupdates = true
+  [remote "origin"]
+          url = git@github.com:nollenr/degas.git
+          fetch = +refs/heads/*:refs/remotes/origin/*
+  [branch "master"]
+          remote = origin
+          merge = refs/heads/master
+  [gui]
+          wmstate = normal
+          geometry = 1059x519+5+49 207 192
+  [remote "heroku"]
+          # url = git@heroku.com:shrouded-caverns-4119.git
+          url = git@heroku.com:guarded-spire-9123.git
+          fetch = +refs/heads/*:refs/remotes/heroku/*
+  
+  "git push heroku master"
+  or
+  "git push heroku 20130604_work:master"
+
+Push the local database to Heroku
+    heroku_pg_push shrouded-caverns-4119 postgres
+    
+  # Postgres equivalent to heroku db:push. 
+  # Pushes local database up to heroku application database.
+  # Requirements: psql --version >= 9.2.2
+  #
+  # Usage: 
+  #
+  # $ heroku_pg_push [appname] [local database name]
+  # 
+  function heroku_pg_push(){
+    echo "!   WARNING: Data in the Heroku app '$1' will be destroyed."
+    echo "    Type '$1' to overwrite data in Heroku app '$1'"
+    read -p "> " heroku_app_name
+    echo
+    if [ "$heroku_app_name" == "$1" ]; then
+      heroku pg:reset DATABASE_URL -a $1
+      pg_dump -xO --host=10.248.8.76 --port=1521 --username=postgres --password $2 | psql `heroku config:get DATABASE_URL -a $1`
+    else
+      echo "Aborted"
+    fi
+  }
+
+
+Git Config for Heroku
+Git, or Heroku seems to update this file automatically.
+  /home/nollenr/rails/degas/.git/config
+  [remote "heroku"]
+          url = git@heroku.com:shrouded-caverns-4119.git
+          fetch = +refs/heads/*:refs/remotes/heroku/*
+
+          
+Delete Apps:
+[nollenr@saphp degas]$ heroku apps
+=== My Apps
+sheltered-headland-8456
+
+[nollenr@saphp degas]$ heroku destroy sheltered-headland-8456
+
+ !    WARNING: Potentially Destructive Action
+ !    This command will destroy sheltered-headland-8456 (including all add-ons).
+ !    To proceed, type "sheltered-headland-8456" or re-run this command with --confirm sheltered-headland-8456
+
+> sheltered-headland-8456
+Destroying sheltered-headland-8456 (including all add-ons)... done
+
+
+Compiling Assets (so that there are no errors on the push to heroku)
+--------------------------------------------------------------------
+(First, be sure there is a production database connection in database.yml)
+RAILS_ENV=production bundle exec rake assets:precompile
+

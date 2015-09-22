@@ -1,0 +1,125 @@
+yum groupinstall 'Base' 'Development Tools'
+
+
+
+#!/usr/bin/env bash
+
+SOURCES=$HOME/rpmbuild/SOURCES
+
+download_file() {
+  echo "Downloading file $1"
+  curl $1 -o $SOURCES/${1##*/}
+}
+
+download_file http://www.leptonica.org/source/leptonica-1.69.tar.gz
+
+download_file https://tesseract-ocr.googlecode.com/files/tesseract-ocr-3.02.02.tar.gz
+
+for l in eng rus grc epo_alt ukr tur tha tgl tel tam swe swa srp sqi spa_old spa slv slk ron por pol nor nld msa mlt mkd mal lit 
+lav kor kan ita_old ita isl ind chr hun hrv hin heb glg frm frk fra fin eus est equ epo enm ell deu dan ces cat bul ben bel aze 
+ara afr jpn chi_sim chi_tra vie ; do
+download_file https://tesseract-ocr.googlecode.com/files/tesseract-ocr-3.02.${l}.tar.gz
+done
+
+
+
+
+curl http://www.leptonica.org/source/leptonica-1.69.tar.gz -o leptonica-1.69.tar.gz
+curl https://tesseract-ocr.googlecode.com/files/tesseract-ocr-3.02.02.tar.gz -o tesseract-ocr-3.02.02.tar.gz
+mkdir ocr
+mv leptonica-1.69.tar.gz ocr/
+mv tesseract-ocr-3.02.02.tar.gz ocr/
+cd ocr/
+gunzip leptonica-1.69.tar.gz 
+gunzip tesseract-ocr-3.02.02.tar.gz 
+tar -xvf leptonica-1.69.tar 
+tar -xvf tesseract-ocr-3.02.02.tar 
+yum provides */libjpeg.a
+yum list libjpeg-turbo-static
+yum install libjpeg-turbo-static
+yum provides */libtiff.a
+yum install libtiff-static
+yum provides */libpng.a
+yum install libpng-static
+
+cd leptonica-1.69
+./configure
+make
+make install
+
+
+curl https://tesseract-ocr.googlecode.com/files/tesseract-ocr-3.02.eng.tar.gz -o tesseract-ocr-3.02.eng.tar.gz
+
+# pwd
+/root/ocr/tesseract-ocr
+
+cp ../tesseract-ocr-3.02.eng.tar.gz .
+
+gunzip tesseract-ocr-3.02.eng.tar.gz 
+tar -xvf tesseract-ocr-3.02.eng.tar 
+
+./autogen.sh 
+./configure
+make
+
+cd /usr/local/share/
+tar -xvf /root/ocr/tesseract-ocr-3.02.eng.tar
+cp tesseract-ocr/tessdata/* tessdata/
+
+
+Error opening data file /usr/local/share/tessdata/eng.traineddata
+Please make sure the TESSDATA_PREFIX environment variable is set to the parent directory of your "tessdata" directory.
+
+
+
+
+
+http://kiirani.com/2013/03/22/tesseract-pdf.html
+Tesseract doesn’t read PDFs.
+
+I’m sure I used it successfully on a TIFF last time, though.
+Imagemagick can probably convert that for me.
+
+% convert file.pdf file.tiff
+% tesseract file.tiff output
+Tesseract Open Source OCR Engine v3.02.02 with Leptonica
+Error in pixReadFromTiffStream: can't handle bpp > 32
+Error in pixReadStreamTiff: pix not read
+Error in pixReadStream: tiff: no pix returned
+Error in pixRead: pix not read
+Unsupported image type.
+
+Mm, nope. Some slight issues with colour TIFF images there.
+
+Let’s make that an 8 bit TIFF instead.
+
+% convert file.pdf -depth 8 file.tiff
+% tesseract file.tiff output
+Tesseract Open Source OCR Engine v3.02.02 with Leptonica
+Page 1 of 13
+...
+
+Okay, now we’re getting somewhere. Unfortunately, the result is gibberish:
+
+    sugersm um wmcwankhmsmu n mm, may k,mvnImq.\-nyv'r1nunr pcv:mclc"s mnsmmsluv uu5|t.eqweu\\me'v mivvr ucnkâ€˜ lm cenlmsu hcv We 
+r_ mu; M. ZIVEV Varâ€˜ wharwuh 
+
+Why? Well, because the TIFF file is barely readable.
+
+There’s one last piece of wisdom here - the standard resolution for “convert” is 72dpi.
+
+If we re-convert that at 300dpi, the result… actually comes out in English. Mostly.
+
+% convert -density 300 file.pdf -depth 8 file.tiff  
+% tesseract file.tiff output
+
+So, steps to read a PDF document with tesseract:
+
+    Convert the PDF document to something else
+    Make sure that something else is high resolution, and grayscale
+    Use tesseract to read the something else instead
+
+And all of that took about a half hour to work out.
+
+
+

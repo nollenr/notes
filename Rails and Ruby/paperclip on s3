@@ -1,0 +1,55 @@
+add the gems paperclip and aws-sdk to the gemfile
+
+I don't think I want to do this: yum install rubygem-nokogiri
+
+yum install libxml2 libxml2-devel libxslt libxslt-devel
+
+gem install paperclip --version 3.5.1
+gem install aws-sdk --version 1.19.0
+  (this gem also requires uuidtools-2.1.4 and nokogiri-1.5.10, but installs them as part of the dependency.
+
+change the gemfile
+and run bundle install or bundle update
+
+change config/environments/development.rb
+  add
+  # Paperclip storage on AWS S3
+  config.paperclip_defaults = {
+    :url => ':s3_domain_url',
+    :path => '/:class/:attachment/:id_partition/:style/:filename',
+    :storage => :s3,
+    :s3_credentials => {
+      :bucket => ENV['AWS_BUCKET'],
+      :access_key_id => ENV['AWS_ACCESS_KEY_ID'],
+      :secret_access_key => ENV['AWS_SECRET_ACCESS_KEY']
+    }
+  }
+
+In the session that I run rails console, I did the following:
+	-bash-4.1$ export AWS_BUCKET=degas-bucket1
+	-bash-4.1$ export AWS_ACCESS_KEY_ID=XXXXXXXXXXXXXXXXXXX
+	-bash-4.1$ export AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxxxxxxx
+	
+Since this is a new model, I did:
+	rails generate model ratingPipeline rating_date:timestamp rating_place:string
+	rake db:migrate
+	rails generate scaffold_controller rating_pipeline
+
+Added the photo to the rating_pipeline model
+	rails generate paperclip rating_pipeline photo
+	rake db:migrate
+
+Updated the model to include
+	has_attached_file :photo
+
+Updated the form on the "new" view to add multipart
+	<%= simple_form_for(@rating_pipeline, :html => {:multipart => true}) do |f| %>
+	
+==========================================================================
+ImageMagick
+yum install ImageMagick	
+
+[root@sa001 /]# convert -version
+Version: ImageMagick 6.5.4-7 2012-05-07 Q16 OpenMP http://www.imagemagick.org
+Copyright: Copyright (C) 1999-2009 ImageMagick Studio LLC
+

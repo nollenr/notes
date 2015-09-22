@@ -1,0 +1,28 @@
+    # removed and replaced with the after_find in the model
+    # @bottles = Bottle.find :all, 
+    # select: "*, case when available then 'Available' else 'Consumed' end as availability", order: "bottle_id"
+
+
+    # @bottles = params[:show_avail_next] == 'true' ? Bottle.where(available: true).order(params[:sort]) : Bottle.order(params[:sort]).all
+    # @bottles = Bottle.find(:all, conditions: "bottle_id = 322", include: :grape, order: 'grapes.name')
+    # @bottles = Bottle.find(:all, include: [:grape, :winery], order: order_by)
+
+    # @bottles = params[:show_avail_next] == 'true' ? Bottle.where(available: true).order(params[:sort]) : Bottle.order(params[:sort]).all
+    # @bottles = Bottle.all(joins: [:grape, :winery], order: 'wineries.name')
+    # @bottles = Bottle.joins(:grape).where(available: true).order('grapes.name')
+
+
+
+
+TOGGLE SHOW ALL/SHOW ONLY AVAILABLE
+From index.html.erb
+This was the original link_to that I used to get the index to toggle "available" bottles
+<%= link_to "Showing All (toggle)", bottle_index_path(show_avail_next: true), id: 'toggle', remote: true %>
+
+This was the corresponding index.js.erb ajax stuff
+$("#toggle").html("Showing <%= link_text %> (toggle)");
+$("#toggle").attr("href", "<%= href %>");
+
+Bottle Controller
+     @bottles = @search.result.order(sort_column + " " + sort_direction).where(available: true).joins(:grape, :winery)
+		 There was an "if" in the index action that would trigger this function

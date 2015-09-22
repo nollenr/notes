@@ -1,0 +1,36 @@
+  def process_array(p_array, p_hash, p_count)
+    if (p_array.length == 0)
+      return [{}, p_count]
+    else
+      v_key = p_array.shift
+      v_key = v_key == "" ? nil : v_key
+      if p_hash.has_key?(v_key)
+        p_hash[v_key] = process_array(p_array, p_hash[v_key],p_count)
+        return p_hash
+      else
+        p_hash[v_key] = process_array(p_array, {}, p_count)
+        return [p_hash,p_count]
+      end
+    end
+  end
+  
+  
+  [["United States", "Oregon", "Dundee", nil], 7], 
+  [["United States", "Oregon", "Hillsboro", nil], 1], 
+  [["United States", "Oregon", "Willamette Valley", nil], 2]
+  
+  "France"=>[
+  {"Epernay"=>[{"Champagne"=>[{nil=>[{}, 2]}, 2]}, 2], 
+   "Margaux"=>[{"Bordeaux region"=>[{nil=>[{}, 1]}, 1]}, 1], 
+   "Pauillac"=>[{"Bordeaux region"=>[{nil=>[{}, 1]}, 1]}, 1], 
+   "Sauternes"=>[{nil=>[{nil=>[{}, 1]}, 1]}, 1]}, 
+   5]
+   
+"United States"=>[
+  {"California"=>[
+    {"Central Coast"=>[{"Paso Robles"=>[{}, 58], "Templeton"=>[{}, 4], nil=>[{}, 6]}, 68], 
+     "Napa Valley"=>[{nil=>[{}, 2]}, 2], 
+     "Paso Robles"=>[{nil=>[{}, 17]}, 17], 
+     nil=>[{nil=>[{}, 1]}, 1]}, 
+     88], 
+   "Nevada"=>[{"Henderson"=>[{"Melody's Wine Club"=>[{}, 1]}, 1]}, 1], "Oregon"=>[{"Dundee"=>[{nil=>[{}, 7]}, 7], "Hillsboro"=>[{nil=>[{}, 1]}, 1], "Willamette Valley"=>[{nil=>[{}, 2]}, 2]}, 10], "Washington"=>[{"Prosser"=>[{nil=>[{}, 1]}, 1], "Walla Walla"=>[{nil=>[{}, 11]}, 11]}, 12], "Washington State"=>[{"Columbia Valley"=>[{nil=>[{}, 5]}, 5], "Walla Walla Valley"=>[{nil=>[{}, 2]}, 2], nil=>[{nil=>[{}, 34]}, 34]}, 41]}, 152],

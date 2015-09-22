@@ -1,0 +1,19 @@
+Color Gradients (v3)
+	http://stackoverflow.com/questions/13040765/how-to-call-bootstraps-less-gradient-mixins
+	http://stackoverflow.com/questions/13436379/rails-with-bootstrap-sass-how-do-you-use-mixins
+	Parameters to the gradient mixin are: start-color, end-color, start-percent, end-percent
+	body {
+	  @include gradient-vertical($white, #08c);
+	}
+	
+	Backgrounds and gradients
+	Mixin 	Parameters 	Usage
+	.#translucent > .background() 	@color: @white, @alpha: 1 	    Give an element a translucent background color
+	.#translucent > .border() 	    @color: @white, @alpha: 1 	    Give an element a translucent border color
+	.#gradient > .vertical() 	    @startColor, @endColor 	        Create a cross-browser vertical background gradient
+	.#gradient > .horizontal() 	    @startColor, @endColor 	        Create a cross-browser horizontal background gradient
+	.#gradient > .directional() 	@startColor, @endColor, @deg 	Create a cross-browser directional background gradient
+	.#gradient > .vertical-three-colors() 	@startColor, @midColor, @colorStop, @endColor 	Create a cross-browser three-color background gradient
+	.#gradient > .radial() 	        @innerColor, @outerColor 	    Create a cross-browser radial background gradient
+	.#gradient > .striped() 	    @color, @angle 	                Create a cross-browser striped background gradient
+	.#gradientBar() 	            @primaryColor, @secondaryColor 	Used for buttons to assign a gradient and slightly darker border

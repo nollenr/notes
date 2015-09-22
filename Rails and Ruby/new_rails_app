@@ -1,0 +1,36 @@
+As root, install the pg gem
+	Notice the double "--"
+	gem install pg -v "0.16.0" -- --with-pg-config=/usr/pgsql-9.2/bin/pg_config
+
+Set the gemset in developer user
+	rvm gemset use rails400
+
+Install the rails architecture
+	rails new tpt -f -d=postgresql
+
+Create/Modify the Gemfile
+	add new gems to the system as needed
+	I create a Gemfile for each gemset I have (rails400 => Gemfile.400)  That way when I want to upgrade to a new rails (or ruby) version I have an easy way to do that while still keeping my previous versions in tact.
+	bundle install --local
+
+Database
+	create a new directory, login role, tablespace, database, pg_hba.conf, restart postgres (in that order)
+	pg_ctl restart -D /u02/pgsql/data
+	database.yml
+	development:
+	    adapter: postgresql
+	    host: 10.248.8.30
+	    port: 1521
+	    database: tptdb
+	    pool: 5
+	    username: tpt
+
+git
+	copied .gitignore from another project
+	git init
+	git add .
+	git commit -m "Initial Commit"
+	created the new repository on git hub (called it tpt.git)
+	git remote add origin git@github.com:nollenr/tpt.git
+	git push -u origin master
+	

@@ -1,0 +1,29 @@
+Also see the bullet gem
+
+ProductsController
+	@products = Product.order("name")
+end
+
+So to output the catagory we might try this:
+Our product model belongs to a category
+	belongs_to :category
+	
+The output might look like this:
+	<td><%= product.category.name %>
+
+To include eager loading (and reduce the number of database queries)
+	@products = Product.order("name").includes(:category)
+	--incedentally, what goes in the inclues statement is the same as what is in the "belongs_to" relationship directive
+
+Use joins rather than include if you're going to use the associated table info as part of the query:
+	@products = Product.order("categories.name").joins(:category)
+
+
+More Join Info
+	Product.joins(:category, :reviews => :user)
+	SELECT... FROM products INNER JOIN "categores" ON ... INNER JOIN "reviews" ON... INNER JOIN "users" ON "users"."id" = "reviews"."user_id"
+	
+	Product.joins("left outer join categories on category_id = categories.id")
+	SELECT... FROM "product" left out join categories on category_id = categories.id
+	
+	

@@ -1,0 +1,14 @@
+In the controller:
+    gon.bottleids = @bottles.map{ |bottle| bottle.id }
+
+In the javascript:
+$(function() { 
+  gon.bottleids.forEach(function(bottleid){
+      $("#"+bottleid+"starRate li a").hover(changeRating, setRating);
+      displayRating(bottleid);
+      setCancelUpdateClick(bottleid);
+  });
+});
+
+
+This was a horrible use of gon... it worked... but I didn't need to do any of that.  But it is an example of using the gon gem.

@@ -1,0 +1,25 @@
+Bookstore Application:
+
+Assign multiple authors... many to many association
+
+Book Model
+Class Book < ActiveRecord::Base
+	attr_accessible : name, :author_ids
+	has_many :authorships
+	has_many :authors, through: : authorships
+end
+
+Setting up the form
+	Can use checkboxes (see episode 17) but will be a problem if there's a lot of checkboxes
+	Can use "chosen", which is a JavaScript plugin available in both jQuery and Prototype.
+	
+	1st step is to create a multi-select field
+	<%= f.collection_select :author_ids, Author.order(:name), :id, :name, {}, {multiple: true}%>
+	
+	Now use :chosen" - there is a gem to help with that integration called "chosen-rails".  Can use 
+	ajax with this as well so that you're not loading too many items.
+	
+	Another option is to use jQuery Tokeninput... better suited for ajax queries.
+	
+	Finally, there is a "select2", based on the chosen gem which might be work looking into.
+	

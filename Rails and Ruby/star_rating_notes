@@ -1,0 +1,114 @@
+link_to "some text", users_path(:params => params, :more_params => "more params")
+
+
+
+
+<%= link_to " Consume", consume_bottle_path(bottle.id), method: :put, confirm: "Drink bottle " + bottle.bottle_id.to_s + "?", remote: true %>
+<a rel="nofollow" data-remote="true" data-method="put" data-confirm="Drink bottle 54?" href="/bottles/3/consume"> Consume</a>
+
+
+===========================================================
+This is from the working (v1) app
+===========================================================
+
+        <!-- Bottle Rating Section -->
+        <div id='<%= bottle.id.to_s + 'starRate' %>' class="starRate">
+            Rating: 
+            <ul data-id='<%= bottle.id.to_s%>'>
+              <li><a  class= "starRateanchor" href="#">Give it 1 star</a></li>
+              <li><a  class= "starRateanchor" href="#">Give it 2 stars</a></li>
+              <li><a  class= "starRateanchor" href="#">Give it 3 stars</a></li>
+              <li><a  class= "starRateanchor" href="#">Give it 4 stars</a></li>
+              <li><a  class= "starRateanchor" href="#">Give it 5 stars</a></li>
+              <li><a  class= "starRateanchor" href="#">Give it 6 stars</a></li>
+              <li><a  class= "starRateanchor" href="#">Give it 7 stars</a></li>
+              <li><a  class= "starRateanchor" href="#">Give it 8 stars</a></li>
+              <li><a  class= "starRateanchor" href="#">Give it 9 stars</a></li>
+              <li><a  class= "starRateanchor" href="#">Give it 10 stars</a></li>
+            </ul>
+            <% hidden_rating_form = bottle.id.to_s + "hiddenRatingForm" %>
+            <% hidden_rating_field = bottle.id.to_s + "hiddenRatingField" %>
+            <% hidden_orating_field = bottle.id.to_s + "hiddenORatingField" %>
+            <% hidden_id_field = bottle.id.to_s + "hiddenIdField" %>
+            <% update_rating_button = bottle.id.to_s + "updateRatingBtn" %>
+            <% cancel_rating_button = bottle.id.to_s + "cancelRatingBtn" %>
+            <%= simple_form_for hidden_rating_form, html: {id: hidden_rating_form}, url: '/rate_edit', remote: :true do |f| %>
+            <%= hidden_field_tag "hidden_rating_field", bottle.rating, id: hidden_rating_field %>
+            <%= hidden_field_tag "hidden_orating_field", bottle.rating, id: hidden_orating_field %>
+            <%= hidden_field_tag "hidden_id_field", bottle.id, id: hidden_id_field %>
+            <%= f.button :submit, id: update_rating_button, class: 'btn-mini btn-primary updateRatingBtn', value: "Update Rating" %>
+            <%= link_to "Cancel Rating", bottles_path, class: 'btn btn-mini cancelRatingBtn', id: cancel_rating_button %>
+            <% end %>
+        </div>
+
+
+/* bottle ratings on bottle index page */
+.updateRatingBtn {
+  clear: both;
+  visibility: hidden;
+}
+.cancelRatingBtn {
+  clear: both;
+  visibility: hidden;
+}
+
+.starRate {overflow: hidden;}
+.starRate ul {margin-left: 0;}
+.starRate li {list-style: none; display: inline;}
+.starRate li a {display: block; width: 16px; height: 16px; background: url(star_rate.gif) left top; float: left; text-indent: -9999px;}
+.starRate a {background-position:0px 0px;}
+.starRate li a.activestar {background-position: 0px -32px;}
+.starRate li a.ratedstar {background-position: 0px -16px;}
+ 
+=========================================================================================
+v1 Rating Javascript/jQuery
+
+$(function() { 
+  gon.bottleids.forEach(function(bottleid){
+      $("#"+bottleid+"starRate li a").hover(changeRating, setRating);
+      displayRating(bottleid);
+      setCancelUpdateClick(bottleid);
+  });
+});
+
+  function changeRating(){
+    $(this).parent().siblings().children("a.starRateanchor").removeClass("ratedstar");
+    $(this).removeClass("ratedstar").addClass("activestar");
+    var index = $(this).parent().index();
+    $(this).parent().siblings(":lt("+index+")").children("a.starRateanchor").addClass("activestar");
+  };
+
+  function setRating(){
+    var current_id = $(this).parent().parent().attr("data-id");
+    $(this).parent().siblings().children(".activestar").removeClass("activestar").addClass("ratedstar");
+    $(this).removeClass("activestar").addClass("ratedstar");
+    $("#" + current_id + "updateRatingBtn").css("visibility", "visible");
+    $("#" + current_id + "cancelRatingBtn").css("visibility", "visible");
+    $("#" + current_id + "hiddenRatingField").val($(this).parent().index());
+  };
+
+  function displayRating(inVar){
+    var index = $("#"+inVar+"hiddenRatingField").val();
+    if (index) {
+      //console.log("Displaying the Rating for id: " + inVar + " Rating: " + index);
+      $("#"+inVar+"starRate li:lt("+index+")").children("a.starRateanchor").addClass("ratedstar");
+    }
+  };
+  
+  function clearStars(inVar){
+    // remove class "activestar" from this div which is "id"+starRate
+    $("#"+inVar+"starRate .ratedstar").removeClass("ratedstar");
+  };
+
+  function setCancelUpdateClick(inVar){
+    $("#"+inVar+"cancelRatingBtn").click(function(){
+      $("#"+inVar+"cancelRatingBtn").css("visibility", "hidden");
+      $("#"+inVar+"updateRatingBtn").css("visibility", "hidden");
+      console.log("Resetting the database value field to: " + $("#"+inVar+"hiddenORatingField").val());
+      $("#"+inVar+"hiddenRatingField").val($("#"+inVar+"hiddenORatingField").val());
+      clearStars(inVar);
+      displayRating(inVar);
+      return false;
+    });
+  };
+

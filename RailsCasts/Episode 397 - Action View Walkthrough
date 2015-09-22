@@ -1,0 +1,44 @@
+Context of where our code is bing execute in the rails stack
+
+index.html.erb (the view template)
+	<%= self.class =>  give us an anonymous class
+	<%= self.class.superclass =>  gives us ActionView::Base
+	
+(See episode 395)
+
+Open actionpack/lib
+  action_view.base.rb
+  (includes a lot of other modules (under helpers, context)
+  
+  what happens when a request comes in:
+  render method of the abstract_controller rendering.rb
+  
+  normalize options (_normalize_render) (which checks to see if there is a render option... if not, it adds one implicitly with some options (like the name of the template ("index") and some prefixes (%w[articles application]) telling it to look in the articles subdirectory or the appliction subdirectory if aritcles doesn't exist.
+  calls render_to_body
+  which calls _render_template
+  which calls render on a view_renderer passing in a view context
+  
+  There are 3 objects we're introducing here:
+  view_context, view_renderer, lookup_context
+  
+  view_context:
+  instanciates a new view_context_class
+  calls ActionView::Base.prepare
+    this has a Class.new (anonymous class)
+    calls view_assigns -- passes all the instance variables from the controller to the view
+    
+  lookup_context (in the view_paths.rb module under abstract_controller)
+  creates a new lookup_context instance and passes in the view_paths
+    in the rails console:
+    >> ArticlesController.view_paths  we get a PathSet object (see episode 269)
+    
+    a lookup_context is used to lookup templates
+    
+  view_renderer (3rd piece of puzzle)
+  object that we call render on... pass in view_context and lookup_context
+  delegate intothe TemplateRenderer class (becuase of render_partial)
+  
+  Reviewing what it took to get the template object:
+  template renderer delegated to lookup_context which in turn delegated to the path_set and that delegated to the resolver.
+  
+  

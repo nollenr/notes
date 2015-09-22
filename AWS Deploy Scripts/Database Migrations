@@ -1,0 +1,4 @@
+To apply database migrations, su to the appman user
+
+cd rails/degas
+rake db:migrate RAILS_ENV=production

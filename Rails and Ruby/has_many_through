@@ -1,0 +1,66 @@
+blend (table: blends, class: Blend)
+  has_many :blend_compositions
+  has_many :grapes, through: :blend_compositions
+
+blend_composition (table: blend_compositions, class: BlendComposition)
+  belongs_to :blend
+  belongs_to :grape
+
+grape (table: grapes, class: Grape)
+  has_many :blend_compositions
+  has_many :blends, through: blend_compositions
+
+@myblend = Blend.new
+@myblend.name = 'testblend1'
+@myblend.save
+
+@myblend=Blend.new(name: 'testblend2')
+@myblend.save
+
+
+"105";"Garnatxa / Grenache / Garnacha / Cannonau";
+"181";"Mourvèdre / Monastrell / Mataro";
+"264";"Shiraz / Syrah";
+"312";"Zinfandel / Crljenak Kaštelanski / Primitivo";
+
+
+@mycollection=@myblend.blend_compositions.build(grape_id: 264, percent_of_grape: 50)
+@mycollection=@myblend.blend_compositions.build(grape_id: 312, percent_of_grape: 50)
+@mycollection.save
+@myblend.blend_compositions.size # 2
+
+# BUT, it doesn't have 2... only the second one is saved to the database.
+=====================================================
+@blend = Blend.new(name: "testblend1")
+@blend.save
+@bc1 = BlendComposition.new(percent_of_grape: 50, grape_id: 264)
+@bc2 = BlendComposition.new(percent_of_grape: 50, grape_id: 312)
+# This seems to continue to work for adding new blend compositions
+@blend.blend_compositions<< [@bc1, @bc2]
+=====================================================
+# This only seems to work for initialization (can't add new ones using this method)
+@blend.blend_compositions=[@bc1, @bc2]
+=====================================================
+My problem was that when I found a grape:
+@g1 = Grape.where("name ilike '%zinf%'")
+
+This was returning a class of Activerecord::Relation.
+What I needed was a class of Grape
+
+I return a class of Grape (i.e. the model) by adding a ".first"
+=====================================================
+@g1 = Grape.where("name ilike '%zinf%'").first
+@g2 = Grape.where("name ilike '%syrah%'").first
+@b1=Blend.new
+@b1.blend_compositions.build(percent_of_grape: 50, grape_id: @g1.id)
+@b1.blend_compositions.build(percent_of_grape: 50, grape_id: @g2.id)
+@b1.save
+
+This makes the most sense for what I'm trying to do...
+On the screen, capture a name for the blend and all the grapes/percentages that should be part of the blend
+create a new blend (with the given name - or a default) (@b1)
+loop
+  find the id of the grape
+  build the blend_composition (@b1.blend_composition.build(percent_of_grape: 50, grape_id: grape_id_n))
+end loop
+save the blend (and associated blend_compositions (@b1.save)

@@ -1,0 +1,45 @@
+Survey Questions Answers (3 Models)  A survey can have many questions and each question can have many answers
+
+Survey
+  has_many :questions
+  
+Question
+  belongs_to :survey
+  has_many :answers
+  
+Answer
+  belongs_to :question
+
+Goal - Manage all of these in a single form.
+
+accepts_nested_attributes_for  - allows us ot manages records from several models in a single form.
+
+Model
+class Survey...
+  attr_accessible :name, :questions_attributes #so that the question attributes can be set
+  has_name :questions
+  accepts_nested_attributes_for :questions
+  # accepts_nested_attributes_for :questions, allow_destroy: true # destroy is disabled by default
+end
+
+View template
+<%= form_for @survey do |f| %>
+  ...
+  <div class="field">
+  	<%= f.label :name %>
+  	<%= f.text_field :name %>
+  </div>
+  
+  #add this to the form
+  <%= f.fields_for :questions do |builder| %>  # passing in a form builder for each question
+  	<fieldset>
+  	  <%= builder.label :content, "Question" %> # a call to builder to make a label
+  	  <%= builder.text_area :content %>  # a call to builder to make a text_area for editing the questions content attribute
+  	  <%= builder.check_box :_destroy %> # to allow us to remove a question from the form.  Need to change the model to allow destroy
+  	  <%= builder.label :destroy, "Remove Question" %>
+  	</fieldset>
+  <% end %>
+  
+  =============================================================================================
+  
+  

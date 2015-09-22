@@ -1,0 +1,136 @@
+
+http://stackoverflow.com/questions/14985822/quite-new-rails-developer-confused-over-content-tag-and-helpers
+First of all ruby conventions: use 2 spaces for spacing and use _ for method names.
+
+Now meet your best friend when writing complex helpers: concat. What it does is outputs string directly to ERB buffer. To show you and example:
+
+def my_helper
+  concat "hello world"
+end
+<% my_helper %>
+
+would output hello world in html even though we used <% and not <%=.
+
+It's very important method when dealing with blocks in helpers, as it means you can call concat multiple times in block and both strings will be output. Here's an example:
+
+def my_helper
+  content_tag :div do
+    concat "Hello "
+    concat "World"
+    concat "!"
+  end
+end
+<%= my_helper %>
+
+would output <div>Hello World!</div>. So using same idea you could do something like this:
+
+def my_helper
+  content_tag :ul do
+    @people.each do |person|
+      concat content_tag(:li, person.name)
+    end
+  end
+end
+<%= my_helper %>
+
+which would result in something like this: <ul><li>John Doe</li><li>Mike Tyson</li></ul>.
+
+So I would rewrite days_helper to something like this:
+
+def days_header
+  (0..date.end_of_month.day).each { |day| concat content_tag(:th, day) }
+end
+
+do something similar with staff_rows method and then table method would look simply like this:
+
+content_tag :table, class: "calendar" do
+  days_header
+  staff_rows
+end
+
+As for the callback part of question: &block captures block that is passed to method into Proc object. This object can later be passed around to other methods or called directly. As you're not using callback object I would simply advise to remove it.
+
+==================================================================================================
+
+http://thepugautomatic.com/2013/06/helpers/
+
+Using concat and capture to clean up custom Rails helpers
+
+Written June 18, 2013 at 19:48 CEST. Tagged Ruby on Rails, helpers.
+
+You can use the built-in Rails helpers, such as content_tag or link_to, in your own helpers.
+
+If you need to concatenate them, you could use +:
+
+1
+2
+3
+4
+5
+6
+7
+
+	
+
+module MyHelper
+  def widget
+    content_tag(:p, class: "widget") do
+      link_to("Hello", hello_path) + " " + link_to("Bye", goodbye_path)
+    end
+  end
+end
+
+But this gets fiddly quick.
+concat
+
+Instead, you can use concat:
+
+
+module MyHelper
+  def widget
+    content_tag(:p, class: "widget") do
+      concat link_to("Hello", hello_path)
+      concat " "
+      concat link_to("Bye", goodbye_path)
+    end
+  end
+end
+
+Each concat(content) adds that content to the output buffer, much like <%= content %> will in a template file.
+capture
+
+There’s a gotcha when you use concat outside a block helper (outside e.g. a content_tag or link_to block).
+
+Say you have this:
+
+module MyHelper
+  def widget
+    concat link_to("Hello", hello_path)
+    concat " "
+    concat link_to("Bye", goodbye_path)
+  end
+end
+
+You might expect this to produce no output, but you’ll see the output once:
+
+<% widget %>
+
+You might expect this to produce the output once, but it will appear twice:
+
+<%= widget %>
+
+Why? Inside block helpers, concat appends only to that element’s content; outside block helpers, it appends straight to the page itself, and is then appended to the page again as <%= widget %> writes out the helper’s return value.
+
+You can get around this with the capture helper. That’s what content_tag uses internally: capture, true to its name, captures the content so it isn’t appended straight to the page. Instead, it’s built up as a separate string, for your custom helper to return (or have its way with):
+
+module MyHelper
+  def widget
+    capture do
+      concat link_to("Hello", hello_path)
+      concat " "
+      concat link_to("Bye", goodbye_path)
+    end
+  end
+end
+
+If you find yourself writing a lot of complex markup in a helper, you may of course be better served by rendering a partial – perhaps from within your helper. But for those cases with a lot of logic influencing the choice of elements or attributes, where a helper may be the best option, concat and capture can clean things up a bit.

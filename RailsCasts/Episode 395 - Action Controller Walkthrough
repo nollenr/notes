@@ -1,0 +1,54 @@
+Rails Source Code
+
+Start with a controller that's already defined:
+  ArticlesController < ApplicationController
+  (index, show, new, create, edit, etc)
+
+Which in turn inherits from ActionController::Base
+  class ApplicationController < ActionController::Base
+    protect_from_forgery
+  end
+  
+git clone https://github.com/rails/rails.git
+	git checkout v3.2.9 (tagged in the rails repository so we can check that out)
+
+under that you'll find lib/action_conttoller
+  and under that you'll find base.rb
+
+this class inherits from another class 
+  class Base < Metal
+  
+lib/action_controller/metal
+  metal.rb
+ 
+metal.rb in turn inherits from another class
+  class Metal < AbstractController::Base
+  
+/lib/abstract_controller/base.rb
+
+Those 3 files don't contain all of the methods we have available to us.
+
+in rails console
+  puts ArticlesController.ancestors
+  shows modules being included that have a lot of methods defined in them.
+  
+  puts ArticlesController.ancestors - ArticlesController.included_modules
+  this will show our inheritence chain (above ...ArticlesController..ApplicationController..ActionController::Base..ActionionController::Metal..AbstractController::Base
+  
+Let's walk through what happens when our rails application receives a request:
+
+At the command prompt:
+  rake middleware
+  This is the list ofrack middleware that the request will go through before it even hits our controller (see episode 319)
+  Then it hits the application routes (episode 231 & 232) -- Action Dispatch
+  
+  The dispatch will call the controller.action(action).call(env) (from route_set.rb)
+  
+  At the command line... call the ActionControllers action method:
+  >> ArticlesController.action(:index)
+  will return a proc object which will act as a rack application and allow us to process the request through it.
+  
+  >>ArticlesController.method(:action).source_location
+  this will tell us where (including the line number!!)
+  
+  

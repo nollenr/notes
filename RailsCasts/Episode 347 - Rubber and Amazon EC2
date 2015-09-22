@@ -1,0 +1,71 @@
+Rubber Gem
+
+# gem install rubber
+
+# rubber -h
+
+to prepare the rails app for EC2 deployment
+complete_passenger_postgesql is the name of the template.
+this creates a BUNCH of files
+# rubber vulcanize complete_passenger_postgresql
+
+Check out github rubber.. there's a directory called templates
+it lists out all the templates to customize production stack
+You could create your own templates as well (phew)
+
+The files that were generated are in the config/rubber directory
+The ruby files are capistrano commands (?) and you don't need to change these
+
+The "yml" files are config files and are meant to be changed.
+In RVM you can customize which version of ruby
+
+In the roles directory are the actual conf files that can be modified as well.
+
+One thing that you will have to change is the rubber.yml file.
+The name of the application... etc.
+You'll definitely need to change the amazon ec2 info.
+cloud_providers
+  aws:
+  
+	Go to the Amazon EC2 account (MyAccount/Console) and go to the security credentials item.
+	Account:  <<strip out dashes>>
+	Access Key: <paste in>
+	Secret_access_key: <paste in>
+	
+	Key Pairs:  
+	key_name: gsg-keypair (default name... but may be able to name it anything)
+	key_file: 
+	
+	To go AWS and generate a new key pair and it will down load it.  Name it the same as in Rubber (gsg-keypair)
+	By default the file is downloaded ~/Downloads/gsg-keypar.pem and we need to move it to
+	~/.ec2/gsg-keypair (no ".pem" extension)
+	
+	chmod that file to 600
+	
+	Now we need to make a public version of that file:
+	ssh-keygen -y -f ~/.ec2/gsg.keypair > ~/.ec2/gsg-keypair.pub
+	
+==========================================
+Now we need to edit the gemfile in the rubber subdirectory
+Remove the comment on the "gem'therubyracer' in order to have a compilier (?)
+
+Also, there are some gems added by rubber, so you'll need to run the bundle install command
+
+==========================================
+
+Deploy.  This is all done via capistrano:
+cap rubber:create_staging
+
+Destroy:
+cap rubber:destroy_all
+
+==========================================
+What if I want a db server and an app server, etc.
+
+cap rubber:create
+
+==========================================
+Rubber Useful Commands
+cap -T rubber
+
+cat rubber:describe <list out each instance and their current state>

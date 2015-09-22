@@ -1,0 +1,45 @@
+
+INSTALL
+=================================================
+Add the gem to the gem file:
+gem 'kaminari', 
+And run the bundle command to install it.
+
+This adds a page scope we can add to any active record model (or array or hash I believe).
+
+
+CONTROLLER / VIEW
+=================================================
+In the controller, add the "page" scope to a model (the "per" scope is how many records you want PER PAGE)
+@products = Product.order("name").page(params[:page]).per
+
+In the view call the paginate helper method
+<%= paginate @products %>
+
+
+CHANGING THE WAY IT LOOKS
+=================================================
+config/locals/en.yml
+	views:
+		pagination:
+			previous: "&lt; Previous"
+			next: "Next &gt;"
+			truncate: "..."
+
+
+Can also generate views
+	rails g kaminari:views default
+	what gets genereated is in: app/views/kaminari
+
+	checkout _paginator.html.erb This is the "main" partial
+	For example the following code:
+	<%= current_page > 1 ? prev_link_tag : prev_span_tag %>
+	If we're not on the first page, it is going to show the prev_link_tag, otherwise it is going to show the prev_span_tag
+	
+	To change what we see when we're on the first page (a disabled "previous" link for example), 
+	change the _prev_span_html.erb
+	
+	We can add the following:
+	<span class="prev disabled"><%= raw(t 'views.pagination.previous') %></span>
+	(reads the config/locals/em.yml file and get the 'views, pagination, previous' text.)
+	(still need css, too)

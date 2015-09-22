@@ -1,0 +1,50 @@
+
+Viewing the Log
+git log --oneline --graph --all --decorate
+git log --oneline --since yesterday
+git log --oneline --since "3 days ago"
+
+Comparing Commits -- Comparing two directories and what has changed.
+  can also use --stat --summary -b (--ignore-space-change)
+  --working directory and staging
+  git diff
+  --working directory and a sha
+  git diff 9133ba1 notes/notes
+  --2 different tree-ishes
+  git diff 9133ba1..b654310 notes/notes
+
+Check to see which branches are merged
+  git branch --merged
+  git branch --no-merged
+  git merge-base
+
+Last commit date for a branch
+  git log -1 --pretty=format:"%Cgreen%ci %Cred%cr%Creset" 20130731_develop
+
+Tag 
+  -- Checking out a tagged commit
+  git checkout -b tagv13 tags/v1.3
+  -- Tagging a commit
+  git tag -a v1.3 -m "my version 1.3"
+  --pushing tags
+  git push origin --tags:
+  --viewing tags
+  git describe
+  git describe --long --dirty --abbrev=10 --tags
+   --gives me something like 7.2.0.Final-447-g65bf4ef2d4
+   --which is 447 commits after the 7.2.0.Final tag and the first 10 digest of the global SHA-1 at the current HEAD are "65bf4ef2d4"
+
+Test Merge
+	I don't think there is a way of simulating what will happen until you try the merge. However, if you make sure that the 
+	output of git status is empty before you do the merge, it is quite safe to just go ahead and try it. If you get conflicts, 
+	you can immediately get back to the state you were at before with:
+
+	git reset --merge
+
+Revert local files to last commit
+	git reset --hard  #my experience says to do a "git add ." first.  Otherwise the new files are left on the filesystem.
+
+
+Automatically stage tracked files -- including deleteing the previously tracked files:
+  git add -u :/ (whole working tree)
+  git add -u .  (current path)

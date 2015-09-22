@@ -1,0 +1,57 @@
+Add the gem 'delayed_job_active_record', and bundle command to install it.
+
+rails g deleted_job:active_record <- to create the migration
+rake db:migrate
+
+rake jobs:work <- starts a background job to take care of the jobs in the background table
+
+The link on the page currently runs a controller action.  we need to move the piece we want to run in the background to
+method usually inside the model.
+
+In the controller:
+  @newsletter.delay.deliver <- add a new record to the delay jobs table, call the deliver method on the @newsletter model
+  
+  a better solution is to use the Model directly and pass the info we need into it. (b/c delay stores the object in yml
+  in the database and to decrease that storage we can do this:
+  Newsletter.delay.deliver(params[:id])
+  Now we're passing a simple object into it.
+  
+  
+In the Model
+  class Newsletter < ActiveRecord::Base
+    def self.deliver(id)
+      find(id).deliver
+    end
+    
+  	def deliver
+  	  sleep 10 #simulate a long newsletter delivery
+  	  update_attribute(:delivered_at, Time.zone.now)
+  	end
+  end
+
+delay allows a bunch of options
+  delay(queue: "newsletter") <- this way you could have a number of workers working on different queues
+  delay(priority: 20) <- defaults to 0... a higher priority will be delivered first, negative numbers to process later
+  delay(run_at: 5.minutes.from_now) <- to run at some point in the future
+
+Support for failure
+  	def deliver
+  	  sleep 10 #simulate a long newsletter delivery
+  	  raise "foo" <- not sure what this actually does
+  	  update_attribute(:delivered_at, Time.zone.now)
+  	end
+  	
+Initializer File
+	config/initializers
+	create a new file delayed_job_config.rb
+	
+	Delayed::Worker.max_attempts = 5
+	Delayed::Worker.delay_jobs = !Rails.env.test? <- call directly rather than using a background job
+	
+In Production
+  script/delayed_job start
+  BUT, you need to use the daemons gem and install with bundle
+  script/delayed_job stop
+
+Monitoring the system
+  delayed_job_web gem

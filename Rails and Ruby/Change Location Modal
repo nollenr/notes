@@ -1,0 +1,15 @@
+Using Bootstrap Modal
+
+_bottle.erb view
+  I added a modal div with 3 more divs: header, body and footer
+  
+  In the modal body is a form.  The form "url" is the routes path to the controller/action.  I also made it "remote: true".
+  I also included a simple submit button for the form.
+  
+bottles controller
+  I added a simple action "change_location" action which updates the database
+  
+change_location.js.erb
+  Simple js to update the cellar list page with the new location and then close the modal by causing a "click" on the close button.
+
+  

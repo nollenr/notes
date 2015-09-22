@@ -1,0 +1,15 @@
+See Railscasts #37 for search form
+
+Creating persistance with sort and search:
+	Need hidden fields in the view
+	<%= hidden_field_tag :direction, params[:direction] %>
+	<%= hidden_field_tag :sort, params[:sort] %>
+
+Need a sortable helper (call sortable see episode #228) which contains the "link_to"
+	However, we always want the page to start at 1 after a sort, so we need to add "page: nil" to the params.merge statement!
+	(Is this going to be a problem for displaying the "previous 1 2 3... next, last" buttons?)
+	
+AJAX
+====================================
+Remember that "back" and "bookmarks" won't work correctly with AJAX... Will AJAX improve the user experience?
+

@@ -1,0 +1,20 @@
+Flash Messages using Twitter Bootstrap
+Alerts (already working)
+Need to wrap the message in "alter-error" or "alert-success"
+
+Closing Alerts
+simply add a close html
+<a class="close" data-dismiss="alert">x</a>
+
+bootstrap-sass
+===================================
+https://github.com/thomas-mcdonald/bootstrap-sass/blob/3/docs/RAILS.md
+https://github.com/thomas-mcdonald/bootstrap-sass/blob/3/tasks/converter.rb
+
+It seems like this gem has converted bootstrap (maybe v3?) and left it as 
+part of the gem (see /usr/local/rvm/gems/ruby-2.0.0-p247@rails3214/gems/bootstrap-sass-2.3.2.2/vendor/assets/stylesheets)
+
+How do I know what version of bootstrap it is using?
+
+It looks like the converter may update just the bootstrap piece, but it places it in /vendor/assets.
+

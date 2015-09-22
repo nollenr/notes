@@ -1,0 +1,48 @@
+In the _bottle.erb view (this is the individual "row" for each bottle is the following code:
+        <% if bottle.available %>
+          <span id='<%= bottle.id.to_s + 'avail' %>' ><%= bottle.availability %></span>
+          <span id='<%= bottle.id.to_s + 'consume' %>' >
+          <%= link_to " Consume", consume_bottle_path(bottle.id), method: :put, confirm: "Drink bottle " +
+              bottle.bottle_id.to_s + "?", remote: true %>
+          </span>
+        <% else %>
+          <%= consumed_message(bottle.availability_change_date) %>
+          <!-- %= bottle.availability_change_date.try(:strftime, "%m/%d/%Y %I:%M%P") % -->
+        <% end %>
+        
+If it is available it will say:
+Availble _consume_ <where _consume_ is the link>
+
+When the _consume_ link is clicked it fires the "consume_bottle_path" on the controller
+
+	  def consume
+	    # @bottleid = params[:id].to_s
+	    bottle = current_user.bottles.update(params[:id], available: :false)
+	    bottle.save
+	    @bottle = current_user.bottles.find_by_id(params[:id])
+	    flash.now[:success] = "You have successfully consumed bottle " + bottle.bottle_id.to_s + "!"
+	    respond_to do |format|
+	      format.html { redirect_to bottle_index_path } #index.html.erb
+	      format.js   #consume.js.erb
+	    end #end repond_to
+	  end
+  
+The controller function then calls consume.js.erb (format.js)
+		<% avail_message = consumed_message(@bottle.availability_change_date) %>
+		<% consume_message = '' %>
+		<% avail_id   = '#' + @bottle.id.to_s + 'avail' %>
+		<% consume_id = '#' + @bottle.id.to_s + 'consume' %>
+		
+		
+		$("<%= avail_id %>").html("<%= avail_message %>");
+		$("<%= consume_id %>").attr("href", "");
+		$("<%= consume_id %>").html("<%= consume_message %>");
+
+creates a variable available_message "Consumed 10/11/2013 02:33pm"
+creates a variable consume_message which is empty.
+Figures out the id of the span where the available message is.
+Figures out the id of the spane where the _consume_ link is.
+
+sets the html of the available message
+clears the href of the _consume_ link
+clears the html of the _consume_ link

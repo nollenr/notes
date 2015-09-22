@@ -1,0 +1,52 @@
+http://www.onextrapixel.com/2012/11/12/how-to-use-twitter-bootstrap-to-create-a-responsive-website-design/
+http://www.sitepoint.com/twitter-bootstrap-less-and-sass-understanding-your-options-for-rails-3-1/
+http://www.sitepoint.com/how-to-customize-twitter-bootstraps-design-in-a-rails-app/
+
+
+<< what about bootstrap themes >>
+
+What my options were and how I decided to go:
+Options:
+  -Use Direct
+   Copy bootstrap.css into assets/stylesheets
+   This would be a compiled version of the Less code and is available from git (in root folder)
+   
+  -less-rails-bootstrap
+   adds support for Less into Rails
+   Actually includes the Twitter Bootstrat Less Code files (vendor/assets)
+   also includes the less-rails gem which integrates Less with Rails
+   also includes the less.rb gem which is a wrapper around Less compiler for rails
+   also includes therubyracer so that rails can call the V8 Javascript engine
+   also includes the libv8 gem to install and compile from source the V8 Javascript library (which is in c)
+   
+  -twitter-bootstrap-rails
+   adds support for Less into Rails, but no test suites unlike less-rails-bootstrap
+   
+  -sass-twitter-bootstrap
+   translated Twitter Bootstrap's Less code into Sass.  Not a gem.  To use, clone the repo
+   and copy the bootstrap css file into your app.
+   The benefit is that you have sass code and you can use, override or modify.
+   Drawback is is that you have to repeat the copy each time Twitter releases a newer, better version.
+   
+  -bootstrap-sass ***This is the method I'm using*** & -bootstrap-rails
+   Similar to sass-twitter-bootstrap except that it is a gem and it takes care of the
+   manual copy for you.  
+   The "import bootstrap" is at the top... the browser processes from top to bottom, so anything
+   that is changed below the import "overrides" what is already in the stylesheet.
+   
+   The actual css files are in:
+   /usr/local/rvm/gems/ruby-2.0.0-p247@rails3214/gems/bootstrap-sass-2.3.2.2/
+   
+ Text:
+   I'm trying to work out the heading sizes on my "hero-unit h1".
+   I've tried:
+   
+   @media (max-width: 480px) {
+  .hero-unit h1, h2, h3, h4, h5, h6  { font-size: 100%; }
+   }
+   
+   but that seems to be taking 100% of the body font size and applying it to the headings.  Not what I want.
+   
+   http://stackoverflow.com/questions/9143345/how-to-use-responsive-features-of-bootstrap-2-0
+   gave me that suggestion... but I don't think it worked.  I expected it to take some percentage of the
+   h1...h6 font size.    

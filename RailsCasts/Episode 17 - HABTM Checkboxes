@@ -1,0 +1,42 @@
+Has And Belongs to Many
+Actually, it is a 
+
+
+class Product < ActiveRecord::Base
+  has_many :categorizations
+  has_many :categories, through: :categorizations
+end
+
+class Categorization < ActiveRecord::Base
+  belongs_to :category
+  belongs_to :product
+end
+
+List of Many Products - And each product can belong to many categories
+Many to Many Associate between products and categories
+
+
+
+<div class="field">
+  <% Category.all.each do |category| %>
+    <%= check_box_tag "product[category_ids][]", category.id %>  #see note below
+    <%= category.name %><br/>
+  <% end %>
+</div>
+
+Normally, we would use <%= f.check_box :category_ids %>, but :category_ids is an array, and this won't work here, 
+so, we have to do this manually.  Instead we'll use <%= check_box_tag "product[category_ids][]", category.id %>.  This tells it
+to bundle up all the values submitted into here, into one array inside the params hash.
+
+
+This doesn't display the checkes on the check boxes correctly when we return from a query... so we'll need to add:
+<%= check_box_tag "product[category_ids][]", category.id, @product.category_ids.include?(category.id) %>
+
+At this point, checkbox has the same id.  To change that:
+<%= check_box_tag "product[category_ids][]", category.id, @product.category_ids.include?(category.id), id: dom_id(category) %>
+
+There's still a problem...if all checkboxes are removed, the database is not updated becuase it does not submit unchecked fields.
+To get around that, we can add a hidden field before all of our checkboxes.  
+<%= hidden_field_tag "product[category_ids][]", nil%> #Not sure I exactly understand this... 
+
+

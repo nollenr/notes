@@ -1,0 +1,49 @@
+users controller
+user model
+
+password_digest - user model must contain this column (from has_secure_password)
+the hash function bcrypt will irreversibly encrypt the password to form the password hash (need the bcrypt-ruby gem)
+
+password and password _confirmation attributes to the user model and then rquire the two attributes match before the record is saved
+password attributes will be virtual.
+
+find a user by using the find_by method
+user=User.find_by(email: email)
+
+second step is to use an authenticate method to verify the password
+current_user = user.authenticate(password)
+
+has_secure_password:
+	password and password_confirmation attributes
+	authenticate method to compare encrypted password to the password_digest
+	(as long as password_digest column is in the database adding this one method to our model gives us a secure way to create and authenticate new users
+
+I used scaffold to build the user model and views
+
+The before_save on the users model creates a remember_token, encrypts it and stores it to the database.
+======================================================
+
+Sessions
+
+model sessions as a RESTful resource.  Sessions resource will use a cookie rather than a database back-end.
+Much of the work involved in signin comes from building this cookie-based authentication machinery.
+
+construct:
+	session controller and relevant controller actions
+	signin form
+	cookie manipulation code
+
+REST Actions
+	signin form -> new (POST request to the create action)
+	signing out is handled by sending a delete
+
+rails g controller Sessions --no-test-framework
+
+the SessionsHelper is already included in all views (by default), and by adding it to the application_controller (include SessionsHelper) it is also
+available in all controllers
+
+signing in (the sessions_helper sign_in) get called which creates a new remember_token (unencrypted), puts it in the cookie,
+saves it ot the database (encrypted) and then sets the current_user
+
+the current_user getter in sessions_helper will be called once every time a user visits a page on the site.
+

@@ -1,0 +1,10 @@
+GIT:
+To checkout a specific tag/release/SHA1.  This does NOT create a branch
+git checkout v2.0-64-g835c907
+git checkout `git describe`
+
+To checkout a specific tag/release/SHA1 and create a branch
+git checkout -b v2.0-fixes v2.0 (branch is v2.0-fixes)
+
+git tag -a <tag> -m <message>
+git log --pretty=format:'%ad %h %d' --abbrev-commit --date=short -1

@@ -1,0 +1,50 @@
+Install Apache SSL
+	On my server where apache is installed:
+	yum install mod_ssl
+	
+	This created a bunch of stuff I really wasn't prepared for, including a conf.d directory in /etc/httpd/. It
+	must have also created a bunch of self-signed certificates.
+
+
+Create an elastic IP address at AWS
+	And associate it with my server instance.  This gave me a 'static IP' as well as another public DNS
+	entry for my instance.  At this point, my old DNS entry stopped working... so my Postgres connection 
+	from pgadmin3 stopped working, I could no longer ssh using my old DNS entry and the database.yml.
+	
+	If you check the Network Interface associated with the server, you can see security groups, public and
+	private IP addresses, the Private DNS entry and the public DNS entry.
+	
+	54.200.176.233
+	ec2-54-200-176-233.us-west-2.compute.amazonaws.com
+
+
+Add port 443 to the Security Group in AWS
+	This allows folks from the outside to access that port on my server.
+
+
+Created a Domain Entry at GoDaddy.com
+	create rngwines.com with the public IP address associated with the elastic IP address
+
+Created an SSL certificate at GoDaddy.com
+	See the file rngwines.csr.session to see the values I used when createing the certificate request.
+	I 'cat'ed the rngwines.csr file and copied and pasted that into the csr request page on GoDaddy.
+	After a few minutes, the certificate zip file (27c5e5e418365a.zip) was ready.  I unzipped that
+	file in the "/etc/httpd/conf/ssl.crt" directory and got 2 files.  The certificate (27c5e5e418365a.crt)
+	and the chain file (gd_bundle.crt).  Both were put into the correct format for me by GoDaddy.
+	http://support.godaddy.com/help/article/5238/installing-an-ssl-certificate-in-apache?locale=en
+	http://support.godaddy.com/help/article/5343/generating-a-certificate-signing-request?locale=en
+	http://support.godaddy.com/help/article/4976/rekeying-an-ssl-certificate
+	
+	After setting everything up, I used the SSL Checker (http://www.sslshopper.com/ssl-checker.html#hostname=www.rngwines.com)
+	to verify that everything was working correctly.  Love this thing!
+	
+Changed the hostname
+	Not sure I needed to do this... still a little unsure.
+	http://www.howtogeek.com/50631/
+	
+Edited the /etc/httpd/conf.d/ssl.conf file
+	This was the kicker for me.  Apparenly all "mod" conf files go in this directory.
+	http://httpd.apache.org/docs/current/ssl/ssl_howto.html
+	http://httpd.apache.org/docs/2.2/ssl/ssl_faq.html
+	
+	

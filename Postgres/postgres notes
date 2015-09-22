@@ -1,0 +1,11 @@
+Drop the "public" schema in the degasdb database (needs to be dropped "drop cascaded")
+
+Recreate the public schema (schema = public, owner=degas)
+
+Restore the public schema
+	Format: Custom or TAR
+	File name: degas_db.custom
+	Rolename: degas     ***** This is important so that all the objects are owned by degas, not postgres *****
+	Don't Save: 	owner
+					privilege
+					tablespace

@@ -1,0 +1,4 @@
+This change is going to introduce 3214 (if it isn't already running at that level)
+
+rake db:migrate   (this should be migration: 20130911152917)
+

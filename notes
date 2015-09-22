@@ -1,0 +1,228 @@
+GIT:
+git checkout v2.0-64-g835c907
+git checkout `git describe`
+
+
+Tuesday, 10/02
+rails generate model grapes name:string, color:string
+
+Wednesday, 10/03
+rails generate model Bottle bottle_id:integer, grape:belongs_to
+rails generate controller Bottle
+
+Saturday 10/06
+rails generate migration AddAvailStatusToBottle availability_change_date:date availability_change_message:string
+(Note:  the word bottle must be in the "name".  ActiveRecord uses that key to create the correct migration.  It
+will be empty if you don't.)
+
+Thursday 12/13
+Simple form git-hub
+https://github.com/rafaelfranca/simple_form-bootstrap/blob/master/app/views/articles/_form.html.erb
+Simple form example
+http://simple-form-bootstrap.plataformatec.com.br/articles/new
+
+Thursday 12/13
+gem install simple_form
+bundle install
+rails generate simple_form:install --bootstrap
+
+Sunday 12/16
+logger.debug "In the controller after  @bottle"
+logger.debug "Controller: #{@bottle.attributes.inspect}"
+
+
+Annotate
+bundle exec annotate
+
+Done:  Ajax the "consume" function
+Done:  Flash messages
+Done:  Confirm
+Done:  Use after_find (rather than the funny select) for available/consumed bottles... 
+       still confused about how that might be working!
+Done:  Fixed order by so that the rows are ordered by bottle id.  (BTW, order has to come before all)
+Done:  Use attr_writer rather than trying to set an attribute on the model (oops). 
+       This seems to be the right way to attack this problem... use a setter/getter method
+       along with the after find.
+N/A:   When I use the consume function after I've toggled to only available bottles, the display 
+       reverts to "all" bottles.  Now that the consume function is Ajaxed, this may be unnecessary.
+N/A:   Clear search fields after search is complete.  I don't think I wanna to do this.  Too 
+       confusing for the user.
+Done:  What about adding bottles
+       Okay... start with building a simple form according to the rails tutorial (Hartl).  Then
+       figure out autocomplete... maybe formtastic and formtastic-bootstrap?  Phase 1 looks done.
+Done:  Wineries
+Done:  Names
+Done:  Vintages
+Done:  Cellar locations
+Done:  Add sorts (with arrows, etc).  How do I sort by a "lookup" column?  (i.e. grape name in the 
+       bottles index view)
+Done:  Adding wineries
+Done:  Ajax looses the table headings.  That's gotta be fixed.
+Done:  Make sort changes Ajax.  I think this is all working.  You can sort by any column and the 
+       toggle stays 'fixed'
+Done:  Work out sorting
+Done:  Add searches... for just a winery/grape/bottle_id, etc.  Going to try Ransack!
+             Not working!  When changed avail/consumed search goes away.  Need to change the "available".
+             Now... make it do a post instead of a get.  Then try ajax. 
+             Consumed checkbox doesn't get carried over with a sort and ajax.  Okay... I think this is
+             seriously working now.  I've added some javascript stuff to the index.js.erb
+             which sets the hidden field values as the user changes sort column and direction.
+Done:  Add trigger for availability change.  When a record "availability" is changed", the
+       trigger fires and updates the availability_change_date with the current timestamp
+       unless a timestamp is supplied.  This is accomplished via a db:migration.
+Done:  Price on bottles.  Price has been added to the model, index page, and
+             bottle entry page.  Sorting on the field works.  Instead of the money gem
+             I'm going to use the currency helpers (in rails).  Don't have to worry
+             about the "not null and default value of 0.  Added validation.  Error message
+             not displaying -- will work on that when implementing authentication (from Hartl).
+             http://stackoverflow.com/questions/1019939/ruby-on-rails-best-method-of-handling-currency-money
+             http://api.rubyonrails.org/classes/ActionView/Helpers/NumberHelper.html#M001969  
+Done:  Default value for available should be true!
+Done:  Error message displays (from the tutorial by M. Hartl)
+Done:  bottles.available should be not null.  All rows where avialable is null need to be
+       deleted.
+Done:  Add a "copy" function for entering bottles of wine.  Should be easy.  Go to the entry
+       form with values for the bottle info.
+Done:  Authentication as done by M. Hartl.
+Done:  Authorization as done by M. Hartl.
+Done:  Adding field to bottles to identify them as belonging to a specific user.
+         Need to make it work like microposts.  Dump all of the data from the bottles
+         table.  Change the model so that it is a belongs_to/has_many relationship
+         Added user_id to bottles table.  Added validates presence: true.  Added has_many
+         to user model and belongs_to to the bottle model.  Changed bottle create 
+         from: @bottle = Bottle.new(params[:bottle]) 
+         to: @bottle = current_user.bottles.new(params[:bottle]).
+         Changed bottle index search
+         from: @search = Bottle.search(params[:q])
+         to: @search = current_user.bottles.search(params[:q])
+         Changing "consume" and "copy" methods with the same changes as above.
+Done: Should user.password_digest and user.remember_token be "not null"?
+Done: bottle.grape_id not null and validates presence?
+Done: bottle_id should be unique across user_id, not across all bottles!  Created a "validate"
+      and an index.
+Done:   Rating wines (version 0.1)
+        ... what's this look like... does "everything" have to match... even vintage?
+        can I display this rating on the index if it exists?  
+        I think I'm going to make it another link
+        off the bottles page... so that I can rate consumed wines as well available wines.  
+        how do I want to handle rating wines?  A simple database column on bottles?
+        what if I want to allow multiple people to rate a single bottle (greg/ron etc). 
+        For this version a simple database column, simple page, one rating per bottle.
+        Now that I've added a "form_for", the "rate" link on the bottles page no longer
+        works... "undefined method 'bottle_path' ".  Either routes is wrong (in this
+        case I don't think so), or, I need to use something else in the "form_for" (probably).
+        Added rating on the bottle index including sorting.
+Done:  :menu... bottle/new and bottle/list should not be under account!
+Done:  :Index page doesn't work (with :include nor :joins if a foreign key doesn't exist.  In one case
+        I get the "nil method" (joins) and in the other case I don't get records with a null fk (include)
+        Don't need to do ANY "joins".  Active record takes care of all of that for me and automatically
+        queries records with has/belongs to.  So much magic built into active record.  WOW.  What I
+        did need to do was add a "try" for records with a null foreign key.  For example on 
+        the bottles index page, I needed to add a "bottle.winery.try(:name)" so that if there was
+        no winery, I didn't receive a "nil" class error.  Very cool.  No "joins", etc.
+Done:  :Add autocomplete on bottle entry.  Grapes and wineries now have a very nice autocomplete.
+        I did cheat tho... I used rails autocomlete and then added css to make it "look" like
+        bootstrap.  Did not figure out bootstrap typeahead.
+Done:  :Am I forced to have a grape/winery?  Not sure if this is good or bad.  For this realease
+        both a grape and winery are required.
+Done:   Change loayout of index... remove table... add bootstrap
+Done:   add search by grape color... if I was looking for a bottle of wine, what else
+        would I use?
+Done:   I've got to be able to edit a bottle... price, name, availability, etc.
+Done:   I have to add "type"... port/wine/champagne/liquor/Late Harvest.  This includes
+        searching and sorting.  Add a new model (plus has many/belongs to).  
+Done:   User must select a grape and winery from the list.  So far, I've managed
+        to add some JavaScript that should do the trick (maybe)?  
+Done:   Fix checkboxes on the bottle entry page.  In-line would be much better (now that
+        I know how.
+Done:   Make the wine checkbox selected on the new bottle page.
+Done:   Export to cvs.  Gotta do.
+Done:   Date added to cellar
+Done:   Notes (on enter/edit bottle)
+Done:   Layout: Change spacing on search area of bottle index.
+Done:   Layout: Move the "wine color" ddlb up to the previous line
+Done:  :The cvs download is a little incorrect b/c the headers for the fk are added before
+        the "value_to" executes to find all the values for the keys.  Maybe pull out the
+        headers, find the attributes, then add the header values to the string.
+Done :1:Version number on "about".  Is there a way to increment that automatically? And to add that
+        here with the "done" message so those can be kept in sync with the GIT commit/push?
+        Need to do this so that the released version is recognizable.  How can I track these
+        changes related to the version?  Go back and update after the commit?  Then I've
+        got uncommitted changes.  Or does all of this have to go in the change request?
+Done:  :Un-consuming a bottle (via edit)
+Done:  :Add Foreign key constraint to users!!
+Done:  :Show available only as the default.
+Done:  :Add multi-bottles at once by using a "-" in the bottle id
+Done:  :Should the bottle ID be a text field?  NO.  This will need to be an integer... like a primary key
+Done:  :Clear search button.  Resets all of the search fields and does a search.
+Done:  :Home page should have a "you're already signed in"... if this isn't
+        you, sign out/login
+Done:  :Index page - if no results are returned set a message to the user to 
+        make the functionality clearer.
+Done: 9:Pretty everything up.  Maybe make the sort direction buttons a la 
+        "http://bootstrapdocs.com/v2.0.4/docs/base-css.html" at the bottom.
+Done: 0:Bootstrap 3 / Responsive 
+Done: 1:Allow searches on wine names.
+Done: 1:Allow searches on notes.
+Done: 7:Validations of bottles... uniqueness, etc.
+Done: 9:bottle controller index method has a bunch of unnecessary de-bugging
+        stuff that should be cleaned up.
+Done: 1:Fix the wineries... make it clear what each part really is... then allow searching.
+Done: 0:Enter a message on the confirm consume pop-up... like date consumed and a note. Add
+        rating at the same time in the same pop-up.  Tasting notes on "consume"
+Cancel :Should folks be able to load new wineries/grapes on demand?  That would mean
+        default values for not null columns like "color" for grapes.  If not, then
+        how do I restrict them on the entry form?   Maybe grapes and wineries should
+        be very intensional.  If grapes and wineries are allowed to be entered
+        on the fly, the data could get very sloppy.  So, I'll have to figure out a way
+        to force a selection from the autoselect.
+        Can't add a new winery on the fly.  That might be okay for grapes... but probably not wineries.
+        A great example is the wine I just purchased from Ljubljana.
+Cancel :Flash a consume... so the user sees the status change.  The fact that the consume message is changed
+        should be enough info for the user.
+Cancel :Should cellar locations be a look-up that I can add to... for instance: "12th Shelf - Left"
+        might be a look-up, but "refridgerator" might be something I want to use even tho
+        it isn't in the lookup.
+Cancel :approved user bit... do I want to use that?  How?  What do I message
+        to users?  Do I list that attribute on the index page?
+Cancel :Location of winery/bottle... I may have a winery in Walla Walla (US/Washington), but 
+        the grape might be from columbia valley, or from an estate, etc.  Is that the vineyard?
+        No... the vineyard would be "Red Horse Hills", but I might want to find all
+        Oregon Pinots... what level do I want to track the location?  Maybe make a locations
+        model?
+
+To Do: :If there are ratings for a bottle in the cellar, that "average" rating should
+        be displayed along with the wine (kinda the reverse of the ratings page -- where
+        the number of bottles in the cellar is displayed along with a link.
+To Do: :Make the site work for beers, etc.  Can everything change dynamically?  So are there
+        "types" and then "sub-types"?  Do I have to tell it what I want to use.  Set a 
+        default for the user, but let them switch to any other "site" (like I usually want
+        to use the wine site, but I can go to the beer/whiskey-bourbon-rye/vodka)?  
+To Do: :List grape color on bottles
+To Do: :Hints about using the date added field (today, last Thursday, etc)
+To Do:1:Update the help page.  Make sure it all makes sense!  Can I include pictures?  Where
+        do those get stored?  Assets?
+
+================ Next Version Ideas ====================================
+submit bug reports
+submit upgrade requests
+pop-up for rating wines
+allow multiple ratings per bottle.
+========================================================================
+
+Working:Routes.  These _MUST_ be fixed.  What's the difference between ROUTES and MATCH?
+        I had to add a route for users (which I didn't want) in order to get the 
+        "form_for" to work.  Do I need to do something like sessions with "form_for"?
+        Also, the bottle/bottles thing needs to get worked out, too.  That seems really broken.
+        Routes for bottles seems to be fixed.  Need to work on routes for grapes and wineries.
+
+
+BTW:
+_bottle.erb... uses bottle.bottle_id NOT @bottle.bottle_id becuase it is "called" from
+      index.html.erb which has created a local variable for it!
+
+Railscasts:
+#176 Search Logic
+#228 Sortable Table Columns
+#240 Search, Sort, Paginate with AJAX
+#340 Data Tables

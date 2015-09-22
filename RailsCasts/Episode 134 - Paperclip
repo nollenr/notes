@@ -1,0 +1,42 @@
+Paperclip
+Stores images in the file system rather than the database.
+
+
+Either a gem or a plugin.
+
+	(1) To use the plugin: script/plugin install git://github.com/thoughtbot/paperclip.git
+	(2) Then generate (plugin or gem): script/generate paperclip product photo
+	                                                             <model> <attribute>
+	(3) Then run the migrations.
+	    rake db:migrate 
+	    
+	(4) Change the model to include: has_attached_file :photo
+	
+	(5) Change the view
+	    Add a button
+	      <p>
+	      	<%= f.file_field :photo %>
+	      </p>
+	    
+	    In the "form_for", add multipart
+	    <% form_for @product, :html => {:multipart => true} do |f| %>
+	
+
+    (6) To show the image on the display page add an image tag
+        <%= image_tag @product.photo.url %>
+        
+To change the display size of the image, change the "has_attached_file" to:
+  has_attached_file :photo, :styles => { :small => "150x150>"}  # the '>' tells it to keep the proportions constrainted
+  
+  need to have image magic installed for this to work.
+  <%= image_tag @product.photo.url(:small) %>
+  
+Changing where the file is stored:
+has_attached_file :photo, :styles => { :small => "150x150>"},
+  :url => ""
+  :path => ""
+  
+Validation
+  validate_attachment_presence :photo
+  validate_attachment_size :photo, :less_than => 5.megabytes
+  validate_attachment_content_type :photo, :content_type => ['image/jpeg', 'image/png']

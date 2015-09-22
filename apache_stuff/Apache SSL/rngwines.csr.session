@@ -1,0 +1,27 @@
+[root@ip-172-31-15-40 conf]# openssl req -new -newkey rsa:2048 -nodes -keyout rngwines.key -out rngwines.csr
+Generating a 2048 bit RSA private key
+...............................................................+++
+.........................................................................................................+++
+writing new private key to 'rngwines.key'
+-----
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [XX]:US
+State or Province Name (full name) []:Nevada
+Locality Name (eg, city) [Default City]:Las Vegas
+Organization Name (eg, company) [Default Company Ltd]:.
+Organizational Unit Name (eg, section) []:.
+Common Name (eg, your name or your server's hostname) []:www.rngwines.com
+Email Address []:nollenr@me.com
+
+Please enter the following 'extra' attributes
+to be sent with your certificate request
+A challenge password []:V1tam1mS
+An optional company name []:.
+[root@ip-172-31-15-40 conf]# ls
+httpd.conf  magic  rngwines.csr  rngwines.key  ssl.crt  ssl.csr  ssl.key  temp

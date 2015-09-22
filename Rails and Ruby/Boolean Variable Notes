@@ -1,0 +1,44 @@
+
+
+Example:
+Added a boolean "buy_at_this_price" using database migration
+
+MODEL
+Create instance methods
+  Also added buy_at_this_price to the att_accessible section (otherwise the
+  database cannot be updated by the controller.
+
+View
+Adding a new partial
+_bottle_buy_at_this_price.html.erb
+  The new partial added a couple of <div>s with a <ul> and <li>s for each item
+  Each <li> has an <a> (link_to)
+
+Routes
+  Need to add a route for the "buy_again" path and to point to the right place in the 
+  controller where the code needs to reside.
+
+Javascript On the Page
+start_rating.js.erb
+  Added a hover function on the  <a> to make "highlight"the thumb up or thumb down.
+  Added a display function to "turn" on an up or down thumb based on what's stored
+  in the database.
+  
+Javascript Called from the Controller (as part of the AJAX) process.
+buy_again.js.erb
+  update the local stored rating
+  set the appropriate gold star
+
+Controller
+  Added a new section "buy_again" to respond to the "buy_again_path" added by the
+  new route.  This section updates the database and then calls the javascript page
+  to refresh the display.
+
+CSS
+custom.css.scss
+
+For other AJAX Calls
+index.js.erb
+  call the hover and display methods:
+  $(".thumbRate li a").hover(changeThumb, setThumb);
+  $(".rthumbRate").each(function(){displayThumb($(this));});

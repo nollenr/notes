@@ -1,0 +1,101 @@
+_bottle_header.erb
+<!-- <p>params <%= @param_string %></p> -->
+<table class="table table-hover" id='bottle'>
+  <tr>
+    <th><%= sortable "bottle_id",     "Bottle Id " %>   <%= sort_icon("bottle_id") %></th>
+    <th><%= sortable "cellar_location" %>               <%= sort_icon("cellar_location") %></th>
+    <th><%= sortable "wineries.name", "Winery " %>      <%= sort_icon("wineries.name") %></th>
+    <th><%= sortable "grapes.name",   "Grape " %>       <%= sort_icon("grapes.name") %></th>
+    <th><%= sortable "vintage" %>                       <%= sort_icon("vintage") %></th>
+    <th><%= sortable "name" %>                          <%= sort_icon("name") %></th>
+    <th><%= sortable "vineyard" %>                      <%= sort_icon("vineyard") %></th>
+    <th><%= sortable "drink_by_year", "Drink By Year" %><%= sort_icon("drink_by_year") %></th>
+    <th><%= sortable "price" %><%= sort_icon("price") %></th>
+    <th><%= sortable "rating" %><%= sort_icon("rating") %></th>
+    <th>Consumed or Available</th>
+  </tr>
+
+  <%= render @bottles %>
+
+</table>
+
+
+_bottle.erb
+    <tr>
+      <td><%= bottle.bottle_id %></td>
+      <td><%= bottle.cellar_location %></td>
+      <td><%= bottle.winery.try(:name) %></td>
+      <td><%= bottle.grape.try(:name) %></td>
+      <td><%= bottle.vintage %></td>
+      <td><%= bottle.name %></td>
+      <td><%= bottle.vineyard %></td>
+      <td><%= bottle.drink_by_year %></td>
+      <td><%= number_to_currency(bottle.price) %></td>
+      <td><%= bottle.rating %></td>
+      <td id='<%= bottle.id.to_s + 'avail' %>' ><%= bottle.availability %></td>
+      <% if bottle.available %>
+        <td id='<%= bottle.id.to_s + 'consume' %>' ><%= link_to "Consume", consume_bottle_path(bottle.id), method: :put, confirm: "Drink bottle " +
+        bottle.bottle_id.to_s + "?", remote: true %></td>
+      <% else %>
+        <td></td>
+      <% end %>
+      <td><%= link_to "Copy", copy_bottle_path(bottle.id) %></td>
+      <td><%= link_to "Rate", rate_edit_bottle_path(bottle.id) %></td>
+    </tr>
+
+new.html.erb (Bottles)
+<!--  collection_select :bottle, :grape_id, Grape.all, :id, :name, selected: @bottle.grape_id  -->
+
+<%= f.collection_select(:city_id, 
+        City.all, :id, :name, {},
+        {:data => {  :remote => true,
+                    :url => url_for(:controller => "locations", 
+                                    :action => "filter_by_city")
+                }
+        }
+    )
+%>
+
+ <%= collection_select :payment,
+                         :category_id,
+                         Category.find(:all, :order => 'name', :conditions => ['for_debits = 1 AND (builtin = 1 OR user_id = ?)', session[:user][:id]]),
+                         :id,
+                         :name,
+                         { :with => "'category_id='+this.value" },
+                         {:onChange => remote_function(:update => "ajaxmessage", :url => { :action => :categorise_manually }, :position => "replace") } %>
+
+
+
+Combox from Autocomplete
+rails3-jquery-autocomplete
+http://www.mcbsys.com/techblog/2012/10/convert-a-select-drop-down-box-to-an-autocomplete-in-rails/
+
+Stackoverflow that helped answer the above question.
+http://stackoverflow.com/questions/13096619/rails3-jquery-autocomplete-how-to-extend-select-function/13096823#13096823
+
+CoffeeScript Page:
+http://jashkenas.github.com/coffee-script/
+
+
+ `$('#bottle_grape_name').bind('autocompletechange', function(event, ui) {
+    if(!ui.item) {
+        alert('User clicked on "foo."');
+    }
+});`
+
+
+
+Menu:
+                <ul class="dropdown-menu">
+                  <li><%= link_to "Cellar Table of Contents", toc_path %></li>
+                  <li class="divider"></li>
+                  <li><%= link_to "View Ratings", ratings_path %></li>
+                  <li class="divider"></li>
+                  <li><%= link_to "Cellar List", bottles_path %></li>
+                  <li><%= link_to "Add a Bottle", new_bottle_path %></li>
+                  <li class="divider"></li>
+                  <li><%= link_to "List Grapes", grapes_path %></li>
+                  <li class="divider"></li>
+                  <li><%= link_to "List Wineries", wineries_path %></li>
+                  <li><%= link_to "Add a Winery", new_winery_path %></li>
+                </ul>
