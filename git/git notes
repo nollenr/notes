@@ -17,6 +17,23 @@ Check to see which branches are merged
   git branch --merged
   git branch --no-merged
   git merge-base
+  
+Delete a branch
+  Deleting a remote branch:
+  git push origin --delete <branch>  # Git version 1.7.0 or newer
+  git push origin :<branch>          # Git versions older than 1.7.0
+  
+  Deleting a local branch:
+  git branch --delete <branch>
+  git branch -d <branch> # Shorter version
+  git branch -D <branch> # Force delete un-merged branches
+  
+  Deleting a local remote-tracking branch:
+  git branch --delete --remotes <remote>/<branch>
+  git branch -dr <remote>/<branch> # Shorter
+
+  git fetch <remote> --prune # Delete multiple obsolete tracking branches
+  git fetch <remote> -p      # Shorter
 
 Last commit date for a branch
   git log -1 --pretty=format:"%Cgreen%ci %Cred%cr%Creset" 20130731_develop
@@ -48,3 +65,14 @@ Revert local files to last commit
 Automatically stage tracked files -- including deleteing the previously tracked files:
   git add -u :/ (whole working tree)
   git add -u .  (current path)
+  
+Push a branch to origin
+  git push -u origin <branch name>
+  
+ Revert to the previous commit
+   git reset HEAD --hard
+   git clean -fd
+   
+
+  
+  

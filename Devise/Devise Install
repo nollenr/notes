@@ -1,0 +1,20 @@
+gem install devise
+Gemfile
+  gem 'devise', '~> 3.5'
+ 
+rails g devise:install 
+rails g devise user
+
+commented out "email" in user.rb
+commmented out attr_accessible and has_secure_password
+
+rake db:migrate
+
+rails g devise:views user
+rails g devise:controllers user  #this could be incorrect.  routes are looking for devise controller.
+
+config/routes.rb file:
+devise_for :users, controllers: { sessions: 'users/sessions' }
+
+To re-run, reinstall an old copy of degas-db.custom
+
