@@ -1,3 +1,6 @@
+http://www.sitepoint.com/devise-authentication-in-depth/
+Ilya Bodrov-Krukowski -- Excellent
+
 gem install devise
 Gemfile
   gem 'devise', '~> 3.5'

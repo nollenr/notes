@@ -17,3 +17,8 @@ Color Gradients (v3)
 	.#gradient > .radial() 	        @innerColor, @outerColor 	    Create a cross-browser radial background gradient
 	.#gradient > .striped() 	    @color, @angle 	                Create a cross-browser striped background gradient
 	.#gradientBar() 	            @primaryColor, @secondaryColor 	Used for buttons to assign a gradient and slightly darker border
+	
+
+Using bootstrap-sass
+	https://github.com/twbs/bootstrap-sass
+	Excellent info on modifying application.scss and application.js
